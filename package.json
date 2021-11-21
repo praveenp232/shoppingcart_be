@@ -1,7 +1,7 @@
 {
   "name": "shoppingcart_be",
   "version": "1.0.0",
-  "description": "Shopping cart for Cakes plus gifts backend",
+  "description": "Shopping cart for Cakes backend",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
