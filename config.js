@@ -1,5 +1,5 @@
 module.exports = {
-    secretekey : 'jahgfjahrfih',
+    secreteKey : 'jahgfjahrfih',
     db : {
         host : 'localhost',
         user : 'postgres',
