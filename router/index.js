@@ -1,6 +1,8 @@
 const routes = require('express').Router()
-const {verify} = require('../validations/auth')
 
-routes.use('/users',require('./users'))
+routes.use('/users', require('./users'))
+routes.use('/userToken', require('./userToken'))
+routes.use('/category', require('./category'))
+routes.use('/products',require('./products'))
 
 module.exports = routes

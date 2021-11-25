@@ -9,9 +9,9 @@ const signupValidate = (req,res,next) => {
         password2 :Joi.string().required().min(7),
         mobileNo : Joi.string().required(),
         role : Joi.string().required().allow('user'||'admin'),
-        facebookId : Joi.string().required(),
-        twitterId : Joi.string().required(),
-        googleId : Joi.string().required(),
+        facebookId : Joi.string(),
+        twitterId : Joi.string(),
+        googleId : Joi.string(),
         captcha: Joi.string()
     })
     const {error} = schema.validate(req.body);
@@ -41,8 +41,9 @@ const updatePasswordValidate = (req,res,next) => {
 
 const forgetPasswordValidate = (req,res,next) => {
     const schema = Joi.object().keys({
-       password : Joi.string().required().min(),
-       password2 : Joi.string().required().min()
+        email : Joi.string().required()
+    //    password : Joi.string().required().min(7),
+    //    password2 : Joi.string().required().min(7)
     })
 
     const {error} = schema.validate(req.body);
@@ -50,12 +51,23 @@ const forgetPasswordValidate = (req,res,next) => {
     next();
 }
 
+const verifyOTPValidate = (req,res,next) => {
+    const schema = Joi.object().keys({
+        OTP : Joi.string().required()
+    })
+
+    const {error} = schema.validate(req.body)
+    if(error) errorMessage(res,422,error)
+    next();
+}
+
 const updateValidate = (req,res,next) => {
     const schema = Joi.object().keys({
-       name : Joi.string().required(),
-       facebookId : Joi.string().required(),
-       twitterId : Joi.string().required(),
-       googleId : Joi.string(). required()
+       name : Joi.string(),
+       facebookId : Joi.string(),
+       twitterId : Joi.string(),
+       googleId : Joi.string(),
+       role: Joi.string()
     })
 
     const {error} = schema.validate(req.body);
@@ -68,6 +80,7 @@ module.exports = {
     siginValidate,
     updatePasswordValidate,
     forgetPasswordValidate,
+    verifyOTPValidate,
     updateValidate
 
 }

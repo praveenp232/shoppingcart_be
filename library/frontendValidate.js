@@ -1,4 +1,4 @@
-const { Connection } = require("pg")
+const Connection = require("../db")
 
 const validateSignup = async(body) => {
     if(body.password != body.password2) throw new Error ("password and confirmation password does not match")

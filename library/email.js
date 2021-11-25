@@ -1,3 +1,4 @@
+const nodeMailer = require('nodemailer')
 const sendMail = async(to,subject,text,htmlcontent) => {
 const transporter = nodeMailer.createTransport ({
     port : 465,
