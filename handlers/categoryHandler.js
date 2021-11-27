@@ -4,13 +4,12 @@ const logger = require('../library/logger')
 const categoryController = require('../controller/category')
 
 const addCategory = async (req, res) => {
-    try{
-        const categoryController = require('../controller/category')
+    try {
         const CategoryController = new categoryController(req.user.id)
         const addCategory = await CategoryController.addCategory(req.body,req.user.id)
+        console.log(addCategory)
         successHandler(200,addCategory,res)
-    }
-    catch(e){
+    } catch (e){
         console.log(e)
         errorHandler(e,res)
     }
@@ -40,6 +39,27 @@ const categoryList = async (req,res) => {
     }
 }
 
+const categoryInfo = async (req,res) => {
+    try {
+       const CategoryController = new categoryController()
+       const categoryInfo = await CategoryController.categoryInfo(req.params.slug)
+       successHandler(200,categoryInfo,res)
+    }
+    catch(e){
+        errorHandler(e,res)
+
+    }
+}
+const searchCategory = async(req,res) => {
+    try{
+       const CategoryController = new categoryController()
+       const searchCategory = await CategoryController.searchCategory(req.body)
+       successHandler(200,searchCategory,res)
+    }
+    catch(e){
+        errorHandler(e,res)
+    }
+}
 const deleteCategory = async(req,res) => {
     try{
        
@@ -51,9 +71,12 @@ const deleteCategory = async(req,res) => {
         errorHandler(e,res)
     }
 }
+
 module.exports = {
     addCategory,
     updateCategory,
     categoryList,
-    deleteCategory
+    categoryInfo,
+    deleteCategory,
+    searchCategory
 }

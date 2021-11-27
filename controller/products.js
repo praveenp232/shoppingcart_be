@@ -55,6 +55,17 @@ async updateProduct(body,id,id1) {
     }
 }
 
+async searchProduct(body) {
+    try{
+    let query = `select * from product where name like '${body.search}_%'`
+    let {rows} = await Connection.query(query)
+    return rows
+    }
+    catch(error){
+        throw error
+    }
+}
+
 async deleteProduct() {
     try{
     let sql = `UPDATE product SET deletedBy = '${this.userId}', deletedAt = NOW()`

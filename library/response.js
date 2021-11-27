@@ -1,11 +1,11 @@
 const logger = require('./logger')
 
 const successHandler = (statusCode = 200, data, res) => {
-    const result = {
-        success: true,
-        data: data
-    }
-    res.status(statusCode).send(result)
+    // const result = {
+    //     success: true,
+    //     data: data
+    // }
+    res.status(statusCode).send(data).end()
 }
 
 const errorHandler = async (err, res) => {

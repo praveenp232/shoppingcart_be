@@ -19,7 +19,7 @@ const addProductValidate = (req,res,next) => {
     })
     const {error} = schema.validate(req.body)
     if(error) errorMessage(res,422,error)
-    next();
+    else next();
 }
 
 const updateProductValidate = (req,res,next) => {
@@ -40,9 +40,19 @@ const updateProductValidate = (req,res,next) => {
     })
     const {error} = schema.validate(req.body)
     if(error) errorMessage(res,422,error)
-    next();
+    else next();
+}
+
+const searchProductValidate = (req,res,next) => {
+    const schema = Joi.object().keys({
+        search :Joi.string().required()
+    })
+    const {error} = schema.validate(req.body)
+    if(error) errorMessage(res,422,error)
+    else next();
 }
 module.exports = {
     addProductValidate,
-    updateProductValidate
+    updateProductValidate,
+    searchProductValidate
 }

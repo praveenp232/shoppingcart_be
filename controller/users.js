@@ -6,6 +6,19 @@ const nodeMailer = require('nodemailer')
 const{secreteKey} = require('../config')
 const Jwt = require('jsonwebtoken')
 
+const checkMail = async (req,res) => {
+  try{
+    let {rows} = await Connection.query(`select name,email,mobileNo,role,facebookId,twitterId,googleId,createdAt,updatedAt from users where email ='${req.body.email}'`)
+    if(rows.length == 0) throw new Error ("user does not exists")
+    else{
+      res.send(rows[0])
+    }
+  }
+  catch(e){
+    res.status(422).send({status:'error' , message:e.message ||e})
+  }
+}
+
 const signup = async (req,res) => {
     try{
       let {name,email,password,mobileNo,role,facebookId,twitterId,googleId} = req.body
@@ -40,7 +53,7 @@ const signin = async (req,res) => {
      let query = `UPDATE users set updatedAt = NOW() where id ='${rows[0].id}'`
      await Connection.query(query)
      let token = await Jwt.sign(data,secreteKey)
-     res.send({status:'success' , token:token , USERRole : rows[0].role , email : rows[0].email})
+     res.send({status:'success' , user: {token:token , role : rows[0].role , email : rows[0].email}})
   }
   catch(e){
      res.status(422).send({status : 'error' , message : e.message ||e})
@@ -156,8 +169,17 @@ const deleteUser = async(req,res) => {
   }
 }
 
+const uploadImage = async(req,res) => {
+  try{
+     res.send({path: req.file.path})
+  }
+  catch(e){
+    res.status(422).send({status:'error' , message:e.message||e})
+  }
+}
 module.exports = {
   signup,
+  checkMail,
   signin,
   updatePassword,
   forgetPassword,
@@ -165,5 +187,6 @@ module.exports = {
   update,
   userInfo,
   listofUsers,
-  deleteUser
+  deleteUser,
+  uploadImage
 }

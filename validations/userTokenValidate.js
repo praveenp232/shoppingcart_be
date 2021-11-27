@@ -8,7 +8,7 @@ const tokenValidate = (req,res,next) => {
 
     const {error} = schema.validate(req.body)
     if(err) errorMessage(res,422,error)
-    next();
+    else next();
 }
 
 module.exports = {

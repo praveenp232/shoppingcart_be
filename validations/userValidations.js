@@ -16,7 +16,7 @@ const signupValidate = (req,res,next) => {
     })
     const {error} = schema.validate(req.body);
     if(error) errorMessage(res,422,error)
-    next();
+    else next();
 }
 
 const siginValidate = (req,res,next) => {
@@ -26,7 +26,7 @@ const siginValidate = (req,res,next) => {
     })
     const {error} = schema.validate(req.body);
     if(error) errorMessage(res,422,error)
-    next();
+    else next();
 }
 
 const updatePasswordValidate = (req,res,next) => {
@@ -36,7 +36,7 @@ const updatePasswordValidate = (req,res,next) => {
     })
     const {error} = schema.validate(req.body);
     if(error) errorMessage(res,422,error)
-    next();
+    else next();
 }
 
 const forgetPasswordValidate = (req,res,next) => {
@@ -48,7 +48,7 @@ const forgetPasswordValidate = (req,res,next) => {
 
     const {error} = schema.validate(req.body);
     if(error) errorMessage(res,422,error)
-    next();
+    else next();
 }
 
 const verifyOTPValidate = (req,res,next) => {
@@ -58,7 +58,7 @@ const verifyOTPValidate = (req,res,next) => {
 
     const {error} = schema.validate(req.body)
     if(error) errorMessage(res,422,error)
-    next();
+    else next();
 }
 
 const updateValidate = (req,res,next) => {
@@ -72,7 +72,16 @@ const updateValidate = (req,res,next) => {
 
     const {error} = schema.validate(req.body);
     if(error) errorMessage(res,422,error)
-    next();
+    else next();
+}
+
+const checkMailValidate = (req,res,next) => {
+    const schema = Joi.object().keys({
+       email : Joi.string().required()
+    })
+    const {error} = schema.validate(req.body);
+    if(error) errorMessage(res,422,error)
+    else next();
 }
 
 module.exports = {
@@ -81,7 +90,8 @@ module.exports = {
     updatePasswordValidate,
     forgetPasswordValidate,
     verifyOTPValidate,
-    updateValidate
+    updateValidate,
+    checkMailValidate
 
 }
 

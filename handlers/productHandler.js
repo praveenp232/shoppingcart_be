@@ -37,6 +37,18 @@ const updateProduct = async(req,res) => {
     }
 }
 
+const searchProduct = async(req,res) => {
+    try{
+    const productController = require('../controller/products')
+    const ProductController = new productController()
+    const searchProduct = await ProductController.searchProduct(req.body)
+    successHandler(200,searchProduct,res)
+    }
+    catch(e){
+    errorHandler(e,res)
+    }
+}
+
 const deleteProduct = async(req,res) => {
     try{
     const productController = require('../controller/products')
@@ -53,5 +65,6 @@ module.exports = {
     addProduct,
     productList,
     updateProduct,
+    searchProduct,
     deleteProduct
 }
