@@ -4,6 +4,6 @@ routes.use('/users', require('./users'))
 routes.use('/userToken', require('./userToken'))
 routes.use('/category', require('./category'))
 routes.use('/products',require('./products'))
-// routes.use('/attributes', require('./attribute'))
+routes.use('/banners', require('./banners'))
 
 module.exports = routes

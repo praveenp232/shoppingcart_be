@@ -7,10 +7,11 @@ class productController {
 
 async addProduct(body,id) {
   try{
-     let {name,slug,code,description,firstBox,secondBox,thirdBox,sort,categoryId,metaTitle,metaDescription,metaKeywords,status,createdBy} = body
-     let query = `INSERT INTO product (name,slug,code,description,firstBox,secondBox,thirdBox,sort,categoryId,metaTitle,metaDescription,metaKeywords,status,createdBy,createdAt) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,NOW())`
-      await Connection.query(query,[name,slug,code,description,firstBox,secondBox,thirdBox,sort,categoryId,metaTitle,metaDescription,metaKeywords,status,id])
-      return "product added successfully"
+     let {name,code,description,firstbox,secondbox,thirdbox,sort,categoryId,metatitle,metadesc,metakeywords,status,addon,createdBy} = body
+     const slug = name.replace(/ /g,'_')
+     let query = `INSERT INTO product (name,slug,code,description,firstbox,secondbox,thirdbox,sort,categoryId,metatitle,metadesc,metakeywords,status,addon,createdBy,createdAt) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,NOW()) RETURNING *`
+     const { rows } =  await Connection.query(query,[name,slug,code,description,firstbox,secondbox,thirdbox,sort,categoryId,metatitle,metadesc,metakeywords,status,addon,this.userId])
+      return rows
   }
   catch(error){
       throw error
@@ -19,8 +20,31 @@ async addProduct(body,id) {
 
 async productList() {
     try{
-    let query = "select * from product"
+    let query = "select * from product where deletedAt is NULL order by createdAt desc "
     let {rows} = await Connection.query(query)
+    await Promise.all(
+        await rows.map(async row => {
+            let p = (`select * from selectedOptions where productId = ${row.id}`)
+            let result = await Connection.query(p)
+            console.log("selectedoptions" + result)
+            row.selectedOptions = result.rows
+
+            let q = (`select * from product_attributes where productId = ${row.id}`)
+            let result1 = await Connection.query(q)
+            console.log("productattribute" + result)
+            row.product_attributes =result1.rows
+
+            let r = ` select * from user_inputs where productId = ${row.id}`
+            let result2 = await Connection.query(r)
+            console.log("userinputs" + result2)
+            row.user_inputs = result2.rows
+
+            let s = ` select * from images where productId = ${row.id}`
+            let result3 = await Connection.query(s)
+            console.log("images" + result3)
+            row.images = result3.rows
+        })
+    )
     return (rows)
     }
     catch(error){
@@ -28,27 +52,93 @@ async productList() {
     }
 }
 
-async updateProduct(body,id,id1) {
+async producInfo(paramsId) {
+    try{
+    let query = `select * from product where id = '${paramsId}' 
+    and deletedAt is NULL order by createdAt desc `
+    let {rows} = await Connection.query(query)
+    await Promise.all(
+        await rows.map(async row => {
+            let p = (`select * from selectedOptions where productId = ${row.id}`)
+            let result = await Connection.query(p)
+            console.log("selectedoptions" + result)
+            row.selectedOptions = result.rows
+
+            let q = (`select * from product_attributes where productId = ${row.id}`)
+            let result1 = await Connection.query(q)
+            console.log("productattribute" + result)
+            row.product_attributes =result1.rows
+
+            let r = ` select * from user_inputs where productId = ${row.id}`
+            let result2 = await Connection.query(r)
+            console.log("userinputs" + result2)
+            row.user_inputs = result2.rows
+
+            let s = ` select * from images where productId = ${row.id}`
+            let result3 = await Connection.query(s)
+            console.log("images" + result3)
+            row.images = result3.rows
+        })
+    )
+    return (rows)
+    }
+    catch(error){
+        throw error
+    }
+}
+
+async updateProduct(body,paramsId,userId) {
     try{
     let query = ''
     if(body.name) query += `name = '${body.name}'`
     if(body.slug) query += (query != '' ? ',':'') + `slug = '${body.slug}'`
     if(body.code) query += (query != '' ? ',':'') + `code = '${body.code}'`
     if(body.description) query += (query != '' ? ',':'') + `description = '${body.description}'`
-    if(body.firstBox) query += (query != '' ? ',':'') + `firstBox = '${body.firstBox}'`
-    if(body.secondBox) query += (query != '' ? ',':'') + `secondBox = '${body.secondBox}'`
-    if(body.thirdBox) query += (query != '' ? ',':'') + `thirdBox = '${body.thirdBox}'`
+    if(body.firstbox) query += (query != '' ? ',':'') + `firstbox = '${body.firstbox}'`
+    if(body.secondbox) query += (query != '' ? ',':'') + `secondbox = '${body.secondbox}'`
+    if(body.thirdbox) query += (query != '' ? ',':'') + `thirdbox = '${body.thirdbox}'`
     if(body.sort) query += (query != '' ? ',':'') + `sort = '${body.sort}'`
     if(body.categoryId) query += (query != '' ? ',':'') + `categoryId = '${body.categoryId}'`
-    if(body.metaTitle) query += (query != '' ? ',':'') + `metaTitle = '${body.metaTitle}'`
-    if(body.metaDescription) query += (query != '' ? ',':'') + `metaDescription = '${body.metaDescription}'`
+    if(body.metatitle) query += (query != '' ? ',':'') + `metatitle = '${body.metatitle}'`
+    if(body.metadesc) query += (query != '' ? ',':'') + `metadesc = '${body.metadesc}'`
     if(body.metaKeywords) query += (query != '' ? ',':'') + `metaKeywords = '${body.metaKeywords}'`
     if(body.status) query += (query != '' ? ',':'') + `status = '${body.status}'`
+    if(body.addon) query += (query != '' ? ',':'') + `addon = '${body.addon}'`
     query += (query != '' ? ',':'')
-    let sql = `UPDATE product SET ${query} updatedBy = '${id1}' , updatedAt = NOW() where id = '${id}'`
+    let sql = `UPDATE product SET ${query} updatedBy = '${userId}' , updatedAt = NOW() where id = '${paramsId}'`
     console.log(sql)
     await Connection.query(sql)
-    return "product updated successfully"
+    
+    if(body.selectedOptions){
+        await Promise.all(
+            await body.selectedOptions.map(async opt =>{
+            await Connection.query(`INSERT INTO selectedOptions (title,productId) values($1,$2)`, [opt.title,paramsId])
+        })
+        
+        ) 
+    }  
+    if(body.pvarients){
+        await Promise.all(
+            await body.pvarients.map(async vari =>{
+                await Connection.query('INSERT INTO product_attributes (productId,attributeCombinations,valueCombinations,offerPrice,price) values($1,$2,$3,$4,$5)',[paramsId,vari.combinations,vari.valuecombinations,vari.offerprice,vari.price])
+            })
+        )
+    }
+    if(body.userinputs){
+        await Promise.all(
+            await body.userinputs.map(async ui => {
+                await Connection.query(`INSERT INTO user_inputs (productId,type,title,required) values($1,$2,$3,$4)`,[paramsId,ui.type,ui.title,ui.required])
+            })
+        )
+    }
+    if(body.image){
+        await Promise.all(
+            await body.image.map(async img => {
+                await Connection.query(`INSERT INTO images (productId,path,thumbnail) values ($1,$2,$3)`,[paramsId,img.path,img.thumbnail])
+            })
+        )
+    }
+    return {message:"product updated successfully"}
     }
     catch(error){
         throw error

@@ -5,7 +5,7 @@ const addProduct = async(req,res) => {
     try{
         const productController = require('../controller/products')
         const ProductController = new productController(req.user.id)
-        const addProduct = await ProductController.addProduct(req.body,req.user.id)
+        const addProduct = await ProductController.addProduct(req.body)
         successHandler(200,addProduct,res)
     }
     catch(e){
@@ -19,6 +19,18 @@ const productList = async(req,res) => {
     const ProductController = new productController()
     const productList = await ProductController.productList()
     successHandler(200,productList,res)
+    }
+    catch(e){
+    errorHandler(e,res)
+    }
+}
+
+const productInfo = async(req,res) => {
+    try{
+    const productController = require('../controller/products')
+    const ProductController = new productController()
+    const producInfo = await ProductController.producInfo(req.params.id)
+    successHandler(200,producInfo,res)
     }
     catch(e){
     errorHandler(e,res)
@@ -64,6 +76,7 @@ const deleteProduct = async(req,res) => {
 module.exports = {
     addProduct,
     productList,
+    productInfo,
     updateProduct,
     searchProduct,
     deleteProduct

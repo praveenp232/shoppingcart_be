@@ -4,7 +4,7 @@ const {addCategoryValidate,updateCategoryValidate,searchCategoryValidate} = requ
 const {verify} = require('../validations/auth')
 
 routes.post('/', verify('admin'), addCategoryValidate, addCategory)
-routes.put('/:id',verify('admin'),updateCategoryValidate,updateCategory)
+routes.put('/:id',verify('admin'), addCategoryValidate, updateCategory)
 routes.get('/',categoryList)
 routes.get('/info/:slug',categoryInfo)
 routes.get('/search',searchCategoryValidate,searchCategory)

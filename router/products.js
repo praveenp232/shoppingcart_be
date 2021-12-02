@@ -1,10 +1,11 @@
 const routes = require('express').Router()
-const {addProduct,productList,updateProduct,deleteProduct,searchProduct} = require('../handlers/productHandler')
+const {addProduct,productList,updateProduct,deleteProduct,searchProduct,productInfo} = require('../handlers/productHandler')
 const {addProductValidate,updateProductValidate,searchProductValidate} = require('../validations/productValidate')
 const {verify} = require('../validations/auth')
 
 routes.post('/', verify('admin'), addProductValidate, addProduct)
 routes.get('/',productList)
+routes.get('/:id',productInfo)
 routes.put('/:id', verify('admin'), updateProductValidate, updateProduct)
 routes.delete('/:id',verify('admin'),deleteProduct)
 routes.get('/search',searchProductValidate,searchProduct)
