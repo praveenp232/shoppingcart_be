@@ -1,3 +1,4 @@
+const { Console } = require('winston/lib/winston/transports')
 const Connection = require('../db')
 
 class productController {
@@ -18,10 +19,12 @@ async addProduct(body,id) {
   }
 }
 
-async productList() {
+async productList(querypa) {
     try{
-    let query = "select * from product where deletedAt is NULL order by createdAt desc "
-    let {rows} = await Connection.query(query)
+    let query = "select * from product where deletedBy is NULL order by createdAt desc"
+    if(querypa.OFFSET) query += ` OFFSET ${querypa.OFFSET}`
+    if(querypa.LIMIT) query += ` LIMIT ${querypa.LIMIT}`
+    let {rows} = await Connection.query(query)    
     await Promise.all(
         await rows.map(async row => {
             let p = (`select * from selectedOptions where productId = ${row.id}`)

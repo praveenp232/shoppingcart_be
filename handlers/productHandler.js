@@ -17,7 +17,7 @@ const productList = async(req,res) => {
     try{
     const productController = require('../controller/products')
     const ProductController = new productController()
-    const productList = await ProductController.productList()
+    const productList = await ProductController.productList(req.query)
     successHandler(200,productList,res)
     }
     catch(e){
